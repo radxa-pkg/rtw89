@@ -1,0 +1,7 @@
+/.debhelper
+/debhelper-build-stamp
+/files
+/rtw89-dkms
+/*.debhelper.log
+/*.debhelper
+/*.substvars
