@@ -1,0 +1,2 @@
+override_dh_install:
+	dh_install -prtw89-dkms --exclude=sign-file --exclude=.gitignore src/* usr/src/rtw89-$(DEB_VERSION)/

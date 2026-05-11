@@ -1,3 +1,4 @@
 [submodule "src"]
 	path = src
-	url = https://github.com/radxa-pkg/rtw89.git
+	url = https://github.com/a5a5aa555oo/rtw89.git
+	branch = 6.6-lts

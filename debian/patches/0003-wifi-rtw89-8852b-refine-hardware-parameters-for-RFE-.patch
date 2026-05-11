@@ -1,0 +1,76 @@
+From e6065c0fd98278e04eac70a8ddf043c8c3fab5cd Mon Sep 17 00:00:00 2001
+From: Dian-Syuan Yang <dian_syuan0116@realtek.com>
+Date: Wed, 28 Jan 2026 23:38:06 +0800
+Subject: [PATCH 3/3] wifi: rtw89: 8852b: refine hardware parameters for RFE
+ type 5
+
+The RFE type 5 should set different DSWR parameters when card power on.
+Therefore, add the corresponding register settings for this type.
+
+Signed-off-by: Dian-Syuan Yang <dian_syuan0116@realtek.com>
+Signed-off-by: Ping-Ke Shih <pkshih@realtek.com>
+Link: https://patch.msgid.link/20251231090647.56407-12-pkshih@realtek.com
+---
+ src/reg.h      |  2 ++
+ src/rtw8852b.c | 24 ++++++++++++++++++++++--
+ 2 files changed, 24 insertions(+), 2 deletions(-)
+
+diff --git a/src/reg.h b/src/reg.h
+index 43c17e9..5e3c6cf 100644
+--- a/src/reg.h
++++ b/src/reg.h
+@@ -302,7 +302,9 @@
+ #define B_AX_PCIE_HCISYS_PWR_STE_MASK GENMASK(1, 0)
+ 
+ #define R_AX_SPS_DIG_OFF_CTRL0 0x0400
++#define B_AX_R1_L1_MASK GENMASK(7, 6)
+ #define B_AX_C3_L1_MASK GENMASK(5, 4)
++#define B_AX_C2_L1_MASK GENMASK(3, 2)
+ #define B_AX_C1_L1_MASK GENMASK(1, 0)
+ 
+ #define R_AX_AFE_OFF_CTRL1 0x0444
+diff --git a/src/rtw8852b.c b/src/rtw8852b.c
+index 68fb0c5..0f17759 100644
+--- a/src/rtw8852b.c
++++ b/src/rtw8852b.c
+@@ -384,6 +384,27 @@ static void rtw8852b_pwr_sps_ana(struct rtw89_dev *rtwdev)
+ 		rtw89_write16(rtwdev, R_AX_SPS_ANA_ON_CTRL2, RTL8852B_RFE_05_SPS_ANA);
+ }
+ 
++static void rtw8852b_pwr_sps_dig_off(struct rtw89_dev *rtwdev)
++{
++	struct rtw89_efuse *efuse = &rtwdev->efuse;
++
++	if (efuse->rfe_type == 0x5) {
++		rtw89_write32_mask(rtwdev, R_AX_SPS_DIG_OFF_CTRL0,
++				   B_AX_C1_L1_MASK, 0x1);
++		rtw89_write32_mask(rtwdev, R_AX_SPS_DIG_OFF_CTRL0,
++				   B_AX_C2_L1_MASK, 0x1);
++		rtw89_write32_mask(rtwdev, R_AX_SPS_DIG_OFF_CTRL0,
++				   B_AX_C3_L1_MASK, 0x2);
++		rtw89_write32_mask(rtwdev, R_AX_SPS_DIG_OFF_CTRL0,
++				   B_AX_R1_L1_MASK, 0x1);
++	} else {
++		rtw89_write32_mask(rtwdev, R_AX_SPS_DIG_OFF_CTRL0,
++				   B_AX_C1_L1_MASK, 0x1);
++		rtw89_write32_mask(rtwdev, R_AX_SPS_DIG_OFF_CTRL0,
++				   B_AX_C3_L1_MASK, 0x3);
++	}
++}
++
+ static int rtw8852b_pwr_on_func(struct rtw89_dev *rtwdev)
+ {
+ 	u32 val32;
+@@ -407,8 +428,7 @@ static int rtw8852b_pwr_on_func(struct rtw89_dev *rtwdev)
+ 	if (ret)
+ 		return ret;
+ 
+-	rtw89_write32_mask(rtwdev, R_AX_SPS_DIG_OFF_CTRL0, B_AX_C1_L1_MASK, 0x1);
+-	rtw89_write32_mask(rtwdev, R_AX_SPS_DIG_OFF_CTRL0, B_AX_C3_L1_MASK, 0x3);
++	rtw8852b_pwr_sps_dig_off(rtwdev);
+ 	rtw89_write32_set(rtwdev, R_AX_SYS_PW_CTRL, B_AX_EN_WLON);
+ 	rtw89_write32_set(rtwdev, R_AX_SYS_PW_CTRL, B_AX_APFN_ONMAC);
+ 
+-- 
+2.39.5
+
