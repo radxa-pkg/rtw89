@@ -1,10 +1,16 @@
-rtw89 (6.6.95+git20250721.2310939-1) UNRELEASED; urgency=medium
+rtw89 (6.6.95+git20250721.2310939-1) stable; urgency=medium
 
+  [ "Radxa Computer Co., Ltd" ]
   [ZHANG Yuntian]
   * fix: clean up deprecated files
   * feat: switch to a5a5aa555oo/rtw89/6.6-lts
 
- -- "Radxa Computer Co., Ltd" <dev@radxa.com>  Mon, 11 May 2026 09:50:31 +0000
+  [ ZHANG Yuntian ]
+  * fix: add pkg.conf
+  * fix: replace broken link
+  * fix: package version needs to match install path
+
+ -- "Radxa Computer Co., Ltd" <dev@radxa.com>  Tue, 12 May 2026 02:55:31 +0000
 
 rtw89 (1.0.2+git20231023.207f9eb-1) stable; urgency=medium
 
